@@ -6,8 +6,8 @@ import math
 
 #Import des tables csv
 
-tgh05 = pd.DataFrame(pd.read_csv("Tables\TGH05.csv", sep = ";"))
-tgf05 = pd.DataFrame(pd.read_csv("Tables\TGF05.csv", sep = ";"))
+tgh05 = pd.DataFrame(pd.read_csv("Tables_morta\TGH05.csv", sep = ";"))
+tgf05 = pd.DataFrame(pd.read_csv("Tables_morta\TGF05.csv", sep = ";"))
 
 def lx(age, annee_naissance, sexe) :
     #Fonction qui renvoie le nombre de personne d'age x, né l'année n, qui sont encore en vie
