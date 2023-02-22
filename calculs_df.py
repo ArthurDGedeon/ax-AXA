@@ -3,8 +3,21 @@ from datetime import datetime
 
 from ax_function import ax_2
 
+param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude.csv", sep = ";"))
+
 def convert_date(date) :
     return datetime.strptime(date, "%d/%m/%Y")
+
+def creation_conjoint(df) :
+    #On crée un df avec uniquement les infos de la raison sociale
+    raison_sociale = df["Raison sociale"]
+    param_contrat = param_etude[param_etude["Raison sociale"] == raison_sociale]
+
+    millesime_max = max(param_contrat["Milésime de rattachement"])
+    param_contrat = param_contrat[param_contrat["Milésime de rattachement"] == millesime_max]
+
+    return df
+
 
 def formattage(df) :
     df = pd.DataFrame(df)
@@ -13,17 +26,16 @@ def formattage(df) :
 
     #On transforme la data pour qu'elle soit expoloitable
     df["taux_reversion"] = df["taux_reversion"].fillna(0)
-    df["date_naissance_Y"] = df["date_naissance_Y"].fillna(df["date_naissance_X"])
-    df["sexe_Y"] = df["sexe_Y"].fillna(df["sexe_X"])
-    df["sexe_X"].replace({"H" : 1, "F" : 0}, inplace= True)
-    df["sexe_Y"].replace({"H" : 1, "F" : 0}, inplace= True)
     df["fractionnement"].replace({"M" : 12, "T" : 4, "S" : 2, "A" : 1}, inplace= True)
-
-    #On transforme les dates en datetime
     df["date_naissance_X"] = df["date_naissance_X"].apply(convert_date)
-    df["date_naissance_Y"] = df["date_naissance_Y"].apply(convert_date)
     df["date_liquidation"] = df["date_liquidation"].apply(convert_date)
     df["date_evaluation"] = df["date_evaluation"].apply(convert_date)
+
+    #Traitement des conjoints
+    df["date_naissance_Y"] = df["date_naissance_Y"].fillna(df["date_naissance_X"]) #On rempli temporairement
+    df["sexe_Y"] = df["sexe_Y"].fillna(df["sexe_X"]) #On rempli temporairement
+    df["sexe_X"].replace({"H" : 1, "F" : 0}, inplace= True)
+    df["sexe_Y"].replace({"H" : 1, "F" : 0}, inplace= True)
 
     return df
 
