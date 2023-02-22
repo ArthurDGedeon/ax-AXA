@@ -17,7 +17,7 @@ def convert_date(date) :
 def calculs_df(df) :
     df = pd.DataFrame(df)
     #On renomme les colonnes
-    df.columns = ["date_naissance_X", "sexe_X", "date_naissance_Y", "sexe_Y", "date_liquidation", "date_evaluation", "fractionnement", "taux_reversion", "prorata_deces", "terme", "contre_assurance", "frais_sur_rente", "rattrapage_rente"]
+    df.columns = ["date_naissance_X", "sexe_X", "date_naissance_Y", "sexe_Y", "date_liquidation", "date_evaluation", "fractionnement", "taux_reversion", "prorata_deces", "terme", "contre_assurance", "frais_sur_rente"]
 
     #On transforme la data pour qu'elle soit expoloitable
     df["taux_reversion"] = df["taux_reversion"].fillna(0)
@@ -26,7 +26,6 @@ def calculs_df(df) :
     df["sexe_X"].replace({"H" : 1, "F" : 0}, inplace= True)
     df["sexe_Y"].replace({"H" : 1, "F" : 0}, inplace= True)
     df["fractionnement"].replace({"M" : 12, "T" : 4, "S" : 2, "A" : 1}, inplace= True)
-    df["rattrapage_rente"].replace({"VRAI" : True, "FAUX" : False}, inplace= True)
 
     #On transforme les dates en datetime
     df["date_naissance_X"] = df["date_naissance_X"].apply(convert_date)
@@ -36,7 +35,6 @@ def calculs_df(df) :
 
     #On calcule l'ax 
     df["annuitésX2"] = df.apply(lambda row : ax_2(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["fractionnement"], row["taux_reversion"], row["prorata_deces"], row["terme"], row["contre_assurance"], row["frais_sur_rente"]), axis =1)
-    df["Sannuité2"] = df.apply(lambda row : ax(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["terme"], row["fractionnement"], row["prorata_deces"], row["taux_reversion"], row["rattrapage_rente"], row["contre_assurance"], row["frais_sur_rente"]), axis =1)
 
     return df
 
