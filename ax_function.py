@@ -211,24 +211,23 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     date_naissance_Y = datetime.strptime(date_naissance_Y, "%d/%m/%Y")
     date_liquidation = datetime.strptime(date_liquidation, "%d/%m/%Y")
     date_calcul = datetime.strptime(date_calcul, "%d/%m/%Y")"""
-
-    if tx_contre_assurance == 1 :
-        date_calcul = max(date_liquidation, datetime(date_calcul.year, date_calcul.month, 1))
+    date_calcul = datetime(date_calcul.year, date_calcul.month, 1)
+    date_calcul_modifie = max(date_liquidation, datetime(date_calcul.year, date_calcul.month, 1))
 
     seconde_periode = fin_frac(date_liquidation, frac)
 
     age_X_liquidation = age_precis_2(date_naissance_X, date_liquidation)
-    age_X_calcul = age_precis_2(date_naissance_X, date_calcul)
+    age_X_calcul_modifie = age_precis_2(date_naissance_X, date_calcul_modifie)
     if tx_reversion == 0 :
-        age_Y_calcul = age_X_calcul
+        age_Y_calcul_modifie = age_X_calcul_modifie
     else:
-        age_Y_calcul = age_precis_2(date_naissance_Y, date_calcul)
+        age_Y_calcul_modifie = age_precis_2(date_naissance_Y, date_calcul_modifie)
     annee_naissance_X = date_naissance_X.year
     annee_naissance_Y = date_naissance_Y.year
-    lx_X_calcul = lx(age_X_calcul, annee_naissance_X, sexe_X)
-    lx_Y_calcul = lx(age_Y_calcul, annee_naissance_Y, sexe_Y)
+    lx_X_calcul_modifie = lx(age_X_calcul_modifie, annee_naissance_X, sexe_X)
+    lx_Y_calcul_modifie = lx(age_Y_calcul_modifie, annee_naissance_Y, sexe_Y)
 
-    ecart_age = age_X_calcul - age_Y_calcul
+    ecart_age = age_X_calcul_modifie - age_Y_calcul_modifie
 
     if prorata_deces == "COMP" :
         coeff_prorata_deces = 1
@@ -241,6 +240,78 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     periode_1_complete = False
     if date_liquidation == fin_frac(date_liquidation, frac) or (date_liquidation + relativedelta(days = -1)) == fin_frac(date_liquidation + relativedelta(days = -1), frac) :
         periode_1_complete = True
+
+    date_temp = []
+    Px_X = []
+    Px_Y = []
+    Qx_X = []
+    Qx_Y = []
+    Px_X_inv = []
+    flux_prorata_deces_1 = []
+    flux_prorata_deces_2 = []
+    flux_prorata_deces_3 = []
+    flux_base_rente = []
+    flux_X = []
+    flux_Y = []
+    flux_prorata_deces = []
+
+    age_X_temp = age_X_liquidation
+    age_Y_temp = age_precis_2(date_naissance_Y, date_liquidation, 3)
+    indice = 1
+    while min(age_X_temp, age_Y_temp) < 121 :
+
+        if indice == 1 :
+            date_temp.append(date_liquidation)
+        elif indice == 2 :
+            date_temp.append(seconde_periode)
+        else :
+            date_temp.append(date_temp[-1] + relativedelta(months = increment))
+
+        age_X_temp = age_precis_2(date_naissance_X, date_temp[-1])
+        age_Y_temp = age_precis_2(date_naissance_Y, date_temp[-1])
+        
+        Px_X.append(min(lx(age_X_temp, annee_naissance_X, sexe_X) / lx_X_calcul_modifie, 1))
+        Px_Y.append(min(lx(age_Y_temp, annee_naissance_Y, sexe_Y) / lx_Y_calcul_modifie, 1))
+        if indice == 1 :
+            Qx_X.append(0)
+            Qx_Y.append(0)
+            Px_X_inv.append(0)
+        else :
+            Qx_X.append(Px_X[-2] - Px_X[-1])
+            Qx_Y.append(Px_Y[-2] - Px_Y[-1])
+            Px_X_inv.append(1 - Px_X[-2])
+        if age_X_temp > age_X_liquidation :
+            if indice == 2 and not(periode_1_complete) :
+                if terme == "ECHU" :
+                    flux_base_rente.append(age_precis_2(date_temp[-2], date_temp[-1] + relativedelta(days = 1), 6))
+                else :
+                    flux_base_rente.append(age_precis_2(age_precis_2(date_temp[-2], date_temp[-1], 6)))
+            else :
+                flux_base_rente.append(1 / frac)
+        else :
+            flux_base_rente.append(0)
+        flux_prorata_deces_1.append(Qx_X[-1] * (coeff_prorata_deces * flux_base_rente[-1]))
+        flux_prorata_deces_2.append((-Qx_X[-1] * Px_Y[-1] * tx_reversion) * (coeff_prorata_deces * flux_base_rente[-1]))
+        flux_prorata_deces_3.append((Qx_Y[-1] * tx_reversion * Px_X_inv[-1]) * (coeff_prorata_deces * flux_base_rente[-1]))
+        flux_X.append(Px_X[-1] * flux_base_rente[-1])
+        flux_Y.append((1 -Px_X[-1]) * Px_Y[-1] * tx_reversion * flux_base_rente[-1])
+        flux_prorata_deces.append(flux_prorata_deces_1[-1] + flux_prorata_deces_2[-1] + flux_prorata_deces_3[-1])
+
+        indice += 1
+
+    ax_X_avec_contreassurance = sum(flux_X) * (1 + tx_frais_rente)
+    ax_Y_avec_contreassurance = sum(flux_Y) * (1 + tx_frais_rente)
+    ax_prorata_deces_avec_contreassurance = sum(flux_prorata_deces) * (1 + tx_frais_rente)
+
+    ax_avec_contreassurance = ax_X_avec_contreassurance + ax_Y_avec_contreassurance + ax_prorata_deces_avec_contreassurance
+
+    age_X_calcul = age_precis_2(date_naissance_X, date_calcul)
+    if tx_reversion == 0 :
+        age_Y_calcul = age_X_calcul
+    else:
+        age_Y_calcul = age_X_calcul - ecart_age
+    lx_X_calcul = lx(age_X_calcul, annee_naissance_X, sexe_X)
+    lx_Y_calcul = lx(age_Y_calcul, annee_naissance_Y, sexe_Y)
 
     date_temp = []
     Px_X = []
@@ -300,14 +371,15 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
 
         indice += 1
 
-    ax_X = sum(flux_X) * (1 + tx_frais_rente)
-    ax_Y = sum(flux_Y) * (1 + tx_frais_rente)
-    ax_prorata_deces = sum(flux_prorata_deces) * (1 + tx_frais_rente)
+    ax_X_sans_contreassurance = sum(flux_X) * (1 + tx_frais_rente)
+    ax_Y_sans_contreassurance = sum(flux_Y) * (1 + tx_frais_rente)
+    ax_prorata_deces_sans_contreassurance = sum(flux_prorata_deces) * (1 + tx_frais_rente)
 
-    ax_axa = ax_X + ax_Y + ax_prorata_deces
+    ax_sans_contreassurance = ax_X_sans_contreassurance + ax_Y_sans_contreassurance + ax_prorata_deces_sans_contreassurance
+
+    ax_axa = ax_sans_contreassurance + tx_contre_assurance * (ax_avec_contreassurance - ax_sans_contreassurance)
 
     return(ax_axa)
-
 
 
 
