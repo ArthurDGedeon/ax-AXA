@@ -91,10 +91,10 @@ def age_precis_2(date_debut, date_fin, precision = 3) :
 
 def ax(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, terme, frac, prorata_deces, tx_reversion, rattrapage_rente, tx_contre_assurance, tx_frais_rente) :
     #Fonction qui renvoie l'annuitée calculée par la méthode "Sannuité2" de AXA
-    date_naissance_X = datetime.strptime(date_naissance_X, "%d/%m/%Y")
+    """date_naissance_X = datetime.strptime(date_naissance_X, "%d/%m/%Y")
     date_naissance_Y = datetime.strptime(date_naissance_Y, "%d/%m/%Y")
     date_liquidation = datetime.strptime(date_liquidation, "%d/%m/%Y")
-    date_calcul = datetime.strptime(date_calcul, "%d/%m/%Y")
+    date_calcul = datetime.strptime(date_calcul, "%d/%m/%Y")"""
     date_calcul = datetime(date_calcul.year, date_calcul.month, 1)
 
     age_X_liquidation = age_precis(date_naissance_X, date_liquidation)
