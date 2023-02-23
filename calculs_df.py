@@ -8,15 +8,18 @@ param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude.csv",
 def convert_date(date) :
     return datetime.strptime(date, "%d/%m/%Y")
 
-def creation_conjoint(df) :
+def informations_creation_conjoint(raison_sociale) :
     #On crée un df avec uniquement les infos de la raison sociale
-    raison_sociale = df["Raison sociale"]
     param_contrat = param_etude[param_etude["Raison sociale"] == raison_sociale]
 
+    #On récupère la dernière année
     millesime_max = max(param_contrat["Milésime de rattachement"])
     param_contrat = param_contrat[param_contrat["Milésime de rattachement"] == millesime_max]
 
-    return df
+    methode_ecart_age = param_contrat["Méthode pour l\'écart d\'âge"]
+    ecart_age = param_contrat["Hypothèse de différence d\'âges"]
+
+    return methode_ecart_age, ecart_age
 
 
 def formattage(df) :
