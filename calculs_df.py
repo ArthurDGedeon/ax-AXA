@@ -44,7 +44,7 @@ def date_naissance_conjoint_fictif(raison_sociale, date_naissance_adherent) :
 def formattage(df) :
     df = pd.DataFrame(df)
     #On renomme les colonnes
-    df.columns = ["date_naissance_X", "sexe_X", "date_naissance_Y", "sexe_Y", "date_liquidation", "date_evaluation", "fractionnement", "taux_reversion", "prorata_deces", "terme", "contre_assurance", "frais_sur_rente"]
+    df.columns = ["Raison sociale", "date_naissance_X", "sexe_X", "date_naissance_Y", "sexe_Y", "date_liquidation", "date_evaluation", "fractionnement", "taux_reversion", "prorata_deces", "terme", "contre_assurance", "frais_sur_rente"]
 
     #On transforme la data pour qu'elle soit expoloitable
     df["taux_reversion"] = df["taux_reversion"].fillna(0)

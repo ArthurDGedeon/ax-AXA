@@ -17,6 +17,7 @@ st.write("Ceci est une application web qui permet de déposer un fichier CSV con
 uploaded_file = st.file_uploader("Upload a CSV file", type = "csv")
 if uploaded_file is not None :
     df = pd.read_csv(uploaded_file, sep = ";")
-    df_to_return = calculs_df.formattage(df)
+    df_to_format = calculs_df.formattage(df)
+    df_to_return = calculs_df.calcul_ax(df_to_format)
     if st.button("Download processed CSV file") :
         st.markdown(download_csv(df_to_return), unsafe_allow_html=True)
