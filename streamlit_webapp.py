@@ -19,5 +19,6 @@ if uploaded_file is not None :
     df = pd.read_csv(uploaded_file, sep = ";")
     df_to_format = calculs_df.formattage(df)
     df_to_return = calculs_df.calcul_ax(df_to_format)
+    df_to_return = calculs_df.calcul_provisions(df_to_return)
     if st.button("Download processed CSV file") :
         st.markdown(download_csv(df_to_return), unsafe_allow_html=True)

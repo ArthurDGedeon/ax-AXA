@@ -49,7 +49,7 @@ def date_naissance_conjoint_fictif(df) :
 def formattage(df) :
     df = pd.DataFrame(df)
     #On renomme les colonnes
-    df.columns = ["Raison sociale", "date_naissance_X", "sexe_X", "date_naissance_Y", "sexe_Y", "date_liquidation", "date_evaluation", "fractionnement", "taux_reversion", "prorata_deces", "terme", "contre_assurance", "frais_sur_rente"]
+    df.columns = ["Raison sociale", "date_naissance_X", "sexe_X", "date_naissance_Y", "sexe_Y", "date_liquidation", "date_evaluation", "fractionnement", "taux_reversion", "prorata_deces", "terme", "contre_assurance", "frais_sur_rente", "montant_droits"]
 
     #On transforme la data pour qu'elle soit expoloitable
     df["taux_reversion"] = df["taux_reversion"].fillna(0)
@@ -69,4 +69,14 @@ def formattage(df) :
 
 def calcul_ax(df) :
     df["annuitesX2"] = df.apply(lambda row : ax_2(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["fractionnement"], row["taux_reversion"], row["prorata_deces"], row["terme"], row["contre_assurance"], row["frais_sur_rente"]), axis = 1)
+    df["annuitesX2_hors_frais_sur_rente"] = df.apply(lambda row : ax_2(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["fractionnement"], row["taux_reversion"], row["prorata_deces"], row["terme"], row["contre_assurance"], 0), axis = 1)
+    
     return df
+
+def calcul_provisions(df) :
+    df["montant_provision"] = df["annuitesX2"] * df["montant_droits"]
+    df["montant_provision_hors_frais_sur_rente"] = df["annuitesX2_hors_frais_sur_rente"] * df["montant_droits"]
+
+    return df
+
+
