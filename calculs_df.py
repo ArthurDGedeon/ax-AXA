@@ -1,5 +1,7 @@
 import pandas as pd
+import numpy as np
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from ax_function import ax_2
 
@@ -19,8 +21,25 @@ def informations_creation_conjoint(raison_sociale) :
     methode_ecart_age = param_contrat["Méthode pour l\'écart d\'âge"]
     ecart_age = param_contrat["Hypothèse de différence d\'âges"]
 
-    return methode_ecart_age, ecart_age
+    return methode_ecart_age.values[0], ecart_age.values[0] #values permet de récupérer uniquement la valeur et pas les autres informations
 
+def sexe_conjoint_fictif(sexe_adherent) :
+    #On crée un conjoint fictif du sexe opposé
+    if sexe_adherent == "H" :
+        return "F"
+    return "H"
+
+def date_naissance_conjoint_fictif(raison_sociale, date_naissance_adherent) :
+    #On crée la date de naissance du conjoint fictif à partir de la table de paramétrage contrat
+    methode_ecart_age, ecart_age = informations_creation_conjoint(raison_sociale)
+    if np.isnan(methode_ecart_age) == True :
+        return date_naissance_adherent
+
+    ecart_age = int(ecart_age) #c'est un float au départ
+
+    date_naissance_conjoint = date_naissance_adherent + relativedelta(years = ecart_age)
+
+    return date_naissance_conjoint
 
 def formattage(df) :
     df = pd.DataFrame(df)
