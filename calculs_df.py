@@ -40,15 +40,13 @@ def date_naissance_conjoint_fictif(df) :
         ecart_age = infos[1]
         
         if isinstance(methode_ecart_age, float) and np.isnan(methode_ecart_age) :
-            row["date_naissance_Y"] = row["date_naissance_X"]
+            df.at[index, "date_naissance_Y"] = row["date_naissance_X"]
 
         ecart_age = int(ecart_age) #c'est un float au départ
 
-        row["date_naissance_Y"] = row["date_naissance_X"] + relativedelta(years = ecart_age)
+        df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%Y-%m-%d")
 
-    return methode_ecart_age, ecart_age
-
-print(date_naissance_conjoint_fictif(df))
+    return df
 
 def formattage(df) :
     df = pd.DataFrame(df)
@@ -73,3 +71,5 @@ def formattage(df) :
 def calcul_ax(df) :
     df["annuitesX2"] = df.apply(lambda row : ax_2(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["fractionnement"], row["taux_reversion"], row["prorata_deces"], row["terme"], row["contre_assurance"], row["frais_sur_rente"]))
     return df
+
+print(formattage(df))
