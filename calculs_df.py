@@ -79,6 +79,5 @@ def calcul_provisions(df) :
 
     return df
 
-print(formattage(df))
 
 
