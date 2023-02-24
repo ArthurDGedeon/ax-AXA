@@ -7,6 +7,8 @@ from ax_function import ax_2
 
 param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude.csv", sep = ";"))
 
+df = pd.DataFrame(pd.read_csv("CIF - input.csv", sep = ";"))
+
 def convert_date(date) :
     return datetime.strptime(date, "%d/%m/%Y")
 
@@ -39,11 +41,10 @@ def date_naissance_conjoint_fictif(df) :
         
         if isinstance(methode_ecart_age, float) and np.isnan(methode_ecart_age) :
             df.at[index, "date_naissance_Y"] = (row["date_naissance_X"]).strftime("%d/%m/%Y")
-            return df
 
-        ecart_age = int(ecart_age) #c'est un float au départ
-
-        df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%d/%m/%Y")
+        else :
+            ecart_age = int(ecart_age) #c'est un float au départ
+            df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%d/%m/%Y")
 
     return df
 
@@ -79,5 +80,7 @@ def calcul_provisions(df) :
     df["montant_provision_hors_frais_sur_rente"] = df["annuitesX2_hors_frais_sur_rente"] * df["montant_droits"]
 
     return df
+
+print(formattage(df))
 
 
