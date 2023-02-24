@@ -54,8 +54,8 @@ def formattage(df) :
     df["date_evaluation"] = df["date_evaluation"].apply(convert_date)
 
     #Traitement des conjoints
-    df["date_naissance_Y"] = df["date_naissance_Y"].fillna(df["date_naissance_X"]) #On rempli temporairement
-    df["sexe_Y"] = df["sexe_Y"].fillna(df["sexe_X"]) #On rempli temporairement
+    df["date_naissance_Y"] = df["date_naissance_Y"].apply(lambda row : date_naissance_conjoint_fictif(row["Raison sociale"], row["date_naissance_X"]), axis = 1)
+    df["sexe_Y"] = df["sexe_Y"].apply(lambda row : sexe_conjoint_fictif(row["sexe_X"]), axis = 1)
     df["sexe_X"].replace({"H" : 1, "F" : 0}, inplace= True)
     df["sexe_Y"].replace({"H" : 1, "F" : 0}, inplace= True)
 
