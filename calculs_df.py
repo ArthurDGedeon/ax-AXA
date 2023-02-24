@@ -7,8 +7,6 @@ from ax_function import ax_2
 
 param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude.csv", sep = ";"))
 
-df = pd.DataFrame(pd.read_csv("RAZEL BEC - Copie.csv", sep = ";"))
-
 def convert_date(date) :
     return datetime.strptime(date, "%d/%m/%Y")
 
