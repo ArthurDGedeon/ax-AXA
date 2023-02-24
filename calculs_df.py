@@ -7,6 +7,8 @@ from ax_function import ax_2
 
 param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude.csv", sep = ";"))
 
+df = pd.DataFrame(pd.read_csv("RAZEL BEC - Copie.csv", sep = ";"))
+
 def convert_date(date) :
     return datetime.strptime(date, "%d/%m/%Y")
 
@@ -23,23 +25,30 @@ def informations_creation_conjoint(raison_sociale) :
 
     return methode_ecart_age.values[0], ecart_age.values[0] #values permet de récupérer uniquement la valeur et pas les autres informations
 
-def sexe_conjoint_fictif(sexe_adherent) :
+def sexe_conjoint_fictif(df) :
     #On crée un conjoint fictif du sexe opposé
-    if sexe_adherent == "H" :
-        return "F"
-    return "H"
+    
+    df["sexe_Y"] = np.where(df["sexe_X"] == "H", "F", "H")
 
-def date_naissance_conjoint_fictif(raison_sociale, date_naissance_adherent) :
+    return df
+
+def date_naissance_conjoint_fictif(df) :
     #On crée la date de naissance du conjoint fictif à partir de la table de paramétrage contrat
-    methode_ecart_age, ecart_age = informations_creation_conjoint(raison_sociale)
-    if np.isnan(methode_ecart_age) == True :
-        return date_naissance_adherent
+    for index, row in df.iterrows():
+        infos = informations_creation_conjoint(row["Raison sociale"])
+        methode_ecart_age = infos[0]
+        ecart_age = infos[1]
+        
+        if isinstance(methode_ecart_age, float) and np.isnan(methode_ecart_age) :
+            row["date_naissance_Y"] = row["date_naissance_X"]
 
-    ecart_age = int(ecart_age) #c'est un float au départ
+        ecart_age = int(ecart_age) #c'est un float au départ
 
-    date_naissance_conjoint = date_naissance_adherent + relativedelta(years = ecart_age)
+        row["date_naissance_Y"] = row["date_naissance_X"] + relativedelta(years = ecart_age)
 
-    return date_naissance_conjoint
+    return methode_ecart_age, ecart_age
+
+print(date_naissance_conjoint_fictif(df))
 
 def formattage(df) :
     df = pd.DataFrame(df)
@@ -54,8 +63,8 @@ def formattage(df) :
     df["date_evaluation"] = df["date_evaluation"].apply(convert_date)
 
     #Traitement des conjoints
-    df["date_naissance_Y"] = df.apply(lambda row : date_naissance_conjoint_fictif(row["Raison sociale"], row["date_naissance_X"]))
-    df["sexe_Y"] = df.apply(lambda row : sexe_conjoint_fictif(row["sexe_X"]))
+    df = sexe_conjoint_fictif(df)
+    df = date_naissance_conjoint_fictif(df)
     df["sexe_X"].replace({"H" : 1, "F" : 0}, inplace= True)
     df["sexe_Y"].replace({"H" : 1, "F" : 0}, inplace= True)
 
