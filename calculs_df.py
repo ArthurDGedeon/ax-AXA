@@ -42,7 +42,7 @@ def date_naissance_conjoint_fictif(df) :
 
         ecart_age = int(ecart_age) #c'est un float au départ
 
-        df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%Y-%m-%d")
+        df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%d/%m/%Y")
 
     return df
 
@@ -61,11 +61,12 @@ def formattage(df) :
     #Traitement des conjoints
     df = sexe_conjoint_fictif(df)
     df = date_naissance_conjoint_fictif(df)
+    df["date_naissance_Y"] = df["date_naissance_Y"].apply(convert_date)
     df["sexe_X"].replace({"H" : 1, "F" : 0}, inplace= True)
     df["sexe_Y"].replace({"H" : 1, "F" : 0}, inplace= True)
 
     return df
 
 def calcul_ax(df) :
-    df["annuitesX2"] = df.apply(lambda row : ax_2(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["fractionnement"], row["taux_reversion"], row["prorata_deces"], row["terme"], row["contre_assurance"], row["frais_sur_rente"]))
+    df["annuitesX2"] = df.apply(lambda row : ax_2(row["date_naissance_X"], row["sexe_X"], row["date_naissance_Y"], row["sexe_Y"], row["date_liquidation"], row["date_evaluation"], row["fractionnement"], row["taux_reversion"], row["prorata_deces"], row["terme"], row["contre_assurance"], row["frais_sur_rente"]), axis = 1)
     return df
