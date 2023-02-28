@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 from ax_function import ax_2
 
-param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude_bis.csv", sep = ";"))
+param_etude = pd.DataFrame(pd.read_csv("Tables\Parametre_etude\param_etude.csv", sep = ";"))
 
 def convert_date(date) :
     return datetime.strptime(date, "%d/%m/%Y")
