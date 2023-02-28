@@ -37,7 +37,7 @@ def date_naissance_conjoint_fictif(df) :
         methode_ecart_age = infos[0]
         ecart_age = infos[1]
 
-        if df.at[index, "date_naissance_Y"].isna() :
+        if isinstance(df.at[index, "date_naissance_Y"], float) and np.isnan(df.at[index, "date_naissance_Y"]) :
         
             if isinstance(methode_ecart_age, float) and np.isnan(methode_ecart_age) :
                 df.at[index, "date_naissance_Y"] = (row["date_naissance_X"]).strftime("%d/%m/%Y")
