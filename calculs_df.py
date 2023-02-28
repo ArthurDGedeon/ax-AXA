@@ -36,13 +36,15 @@ def date_naissance_conjoint_fictif(df) :
         infos = informations_creation_conjoint(row["Raison sociale"])
         methode_ecart_age = infos[0]
         ecart_age = infos[1]
-        
-        if isinstance(methode_ecart_age, float) and np.isnan(methode_ecart_age) :
-            df.at[index, "date_naissance_Y"] = (row["date_naissance_X"]).strftime("%d/%m/%Y")
 
-        else :
-            ecart_age = int(ecart_age) #c'est un float au départ
-            df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%d/%m/%Y")
+        if df.at[index, "date_naissance_Y"].isna() :
+        
+            if isinstance(methode_ecart_age, float) and np.isnan(methode_ecart_age) :
+                df.at[index, "date_naissance_Y"] = (row["date_naissance_X"]).strftime("%d/%m/%Y")
+
+            else :
+                ecart_age = int(ecart_age) #c'est un float au départ
+                df.at[index, "date_naissance_Y"] = (row["date_naissance_X"] + relativedelta(years = ecart_age)).strftime("%d/%m/%Y")
 
     return df
 
