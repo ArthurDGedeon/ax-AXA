@@ -16,7 +16,7 @@ def lx(age, annee_naissance, sexe) :
         lx_axa = coeff_lin * tgh05.iloc[math.floor(age), annee_naissance - 1900 + 1] + (1 - coeff_lin) * tgh05.iloc[math.floor(age) + 1, annee_naissance - 1900 + 1]
     else :
         lx_axa = coeff_lin * tgf05.iloc[math.floor(age), annee_naissance - 1900 + 1] + (1 - coeff_lin) * tgf05.iloc[math.floor(age) + 1, annee_naissance - 1900 + 1]
-    return(lx_axa)
+    return(round(lx_axa,3))
 
 def fin_annee(date) :
     #Fonction qui renvoie le dernier jour de l'année à la date considérée
@@ -205,7 +205,7 @@ def ax(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, dat
 
     return(ax_axa)
 
-def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, frac, tx_reversion, prorata_deces, terme, tx_contre_assurance, tx_frais_rente) :
+def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, age_depart, frac, methode_age_atteint, tx_reversion, prorata_deces, rattrapage_rente, terme, tx_contre_assurance, tx_frais_rente) :
     #Fonction qui renvoie l'annuitée calculée par la méthode "annuitéX2" de AXA
     """date_naissance_X = datetime.strptime(date_naissance_X, "%d/%m/%Y")
     date_naissance_Y = datetime.strptime(date_naissance_Y, "%d/%m/%Y")
@@ -213,6 +213,16 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     date_calcul = datetime.strptime(date_calcul, "%d/%m/%Y")"""
     date_calcul = datetime(date_calcul.year, date_calcul.month, 1)
     date_calcul_modifie = max(date_liquidation, datetime(date_calcul.year, date_calcul.month, 1))
+
+    if methode_age_atteint == 120 :
+        date_liquidation_contractuelle = fin_mois(date_naissance_X + relativedelta(years = age_depart)) + relativedelta(days = 1)
+    else :
+        date_liquidation_contractuelle = fin_trimestre(date_naissance_X + relativedelta(years = age_depart)) + relativedelta(days = 1)
+
+    if rattrapage_rente : 
+        date_liquidation = date_liquidation_contractuelle
+    else :
+        date_liquidation = max(date_calcul, date_liquidation_contractuelle)
 
     seconde_periode = fin_frac(date_liquidation, frac)
 
@@ -265,7 +275,7 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
         elif indice == 2 :
             date_temp.append(seconde_periode)
         else :
-            date_temp.append(date_temp[-1] + relativedelta(months = increment))
+            date_temp.append(fin_mois(date_temp[-1] + relativedelta(months = increment)))
 
         age_X_temp = age_precis_2(date_naissance_X, date_temp[-1])
         age_Y_temp = age_precis_2(date_naissance_Y, date_temp[-1])
@@ -337,7 +347,7 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
         elif indice == 2 :
             date_temp.append(seconde_periode)
         else :
-            date_temp.append(date_temp[-1] + relativedelta(months = increment))
+            date_temp.append(fin_mois(date_temp[-1] + relativedelta(months = increment)))
 
         age_X_temp = age_precis_2(date_naissance_X, date_temp[-1])
         age_Y_temp = age_precis_2(date_naissance_Y, date_temp[-1])
@@ -380,6 +390,5 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     ax_axa = ax_sans_contreassurance + tx_contre_assurance * (ax_avec_contreassurance - ax_sans_contreassurance)
 
     return(ax_axa)
-
 
 
