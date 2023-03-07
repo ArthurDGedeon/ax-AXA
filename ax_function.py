@@ -10,7 +10,9 @@ tgh05 = pd.DataFrame(pd.read_csv("Tables\Tables_morta\TGH05.csv", sep = ";"))
 tgf05 = pd.DataFrame(pd.read_csv("Tables\Tables_morta\TGF05.csv", sep = ";"))
 
 def lx(age, annee_naissance, sexe) :
-    #Fonction qui renvoie le nombre de personne d'age x, né l'année n, qui sont encore en vie
+    """
+    Retourne le nombre de personne d'age x, né l'année n, qui sont encore en vie pour un échantillon donné
+    """
     coeff_lin = round(1 - age % 1, 3)
     if sexe == 1 :
         lx_axa = coeff_lin * tgh05.iloc[math.floor(age), annee_naissance - 1900 + 1] + (1 - coeff_lin) * tgh05.iloc[math.floor(age) + 1, annee_naissance - 1900 + 1]
@@ -19,12 +21,16 @@ def lx(age, annee_naissance, sexe) :
     return(round(lx_axa,3))
 
 def fin_annee(date) :
-    #Fonction qui renvoie le dernier jour de l'année à la date considérée
+    """
+    Retourne le dernier jour de l'année pour une date donnée
+    """
     new_date = datetime(date.year, 12, 31)
     return(new_date)
 
 def fin_semestre(date) :
-    #Fonction qui renvoie le dernier jour du semestre à la date considérée
+    """
+    Retourne le dernier jour du semestres pour une date donnée
+    """
     if date.month <= 6 :
         new_date = datetime(date.year, 6, 30)
     else :
@@ -32,7 +38,9 @@ def fin_semestre(date) :
     return(new_date)
 
 def fin_trimestre(date) :
-    #Fonction qui renvoie le dernier jour du trimestre à la date considérée
+    """
+    Retourne le dernier jour du trimestres pour une date donnée
+    """
     if date.month <= 3 :
         new_date = datetime(date.year, 3, 31)
     elif date.month <= 6 :
@@ -44,12 +52,16 @@ def fin_trimestre(date) :
     return(new_date)
 
 def fin_mois(date) :
-    #Fonction qui renvoie le dernier jour du mois à la date considérée
+    """
+    Retourne le dernier jour du mois pour une date donnée
+    """
     new_date = datetime(date.year, date.month, 1) + relativedelta(months = 1, days = -1)
     return(new_date)
 
 def fin_frac(date, frac) :
-    #Fonction qui renvoie le dernier jour du fractionnement à la date considérée
+    """
+    Retourne la date correspondant à la fin du fractionnement choisi pour une date donnée
+    """
     if frac == 1 :
         new_date = fin_annee(date)
     elif frac == 2 :
@@ -62,12 +74,16 @@ def fin_frac(date, frac) :
 
 
 def debut_mois(date) :
-    #Fonction qui renvoie le premier jour du mois à la date considérée
+    """
+    Retourne le premier jour du mois pour une date donnée
+    """
     new_date = datetime(date.year, date.month, 1)
     return(new_date)
 
 def age_precis(date_debut, date_fin) :
-    #Fonction qui renvoie l'âge réel d'une personne à une date donnée
+    """
+    Retourne l'age d'une personne
+    """
     if fin_mois(date_debut) == date_debut :
         date_debut = date_debut + relativedelta(days = 1)
     if fin_mois(date_fin) == date_fin :
@@ -78,7 +94,9 @@ def age_precis(date_debut, date_fin) :
     return(age)
 
 def age_precis_2(date_debut, date_fin, precision = 3) :
-    #Fonction qui renvoie l'âge réel d'une personne à une date donnée
+    """
+    Retourne l'age d'une personne arrondi à 3 chiffres 
+    """
     date_temp_1 = fin_mois(date_debut)
     date_temp_2 = debut_mois(date_fin)
 
@@ -90,11 +108,9 @@ def age_precis_2(date_debut, date_fin, precision = 3) :
     return(age)
 
 def ax(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, terme, frac, prorata_deces, tx_reversion, rattrapage_rente, tx_contre_assurance, tx_frais_rente) :
-    #Fonction qui renvoie l'annuitée calculée par la méthode "Sannuité2" de AXA
-    """date_naissance_X = datetime.strptime(date_naissance_X, "%d/%m/%Y")
-    date_naissance_Y = datetime.strptime(date_naissance_Y, "%d/%m/%Y")
-    date_liquidation = datetime.strptime(date_liquidation, "%d/%m/%Y")
-    date_calcul = datetime.strptime(date_calcul, "%d/%m/%Y")"""
+    """
+    Retourne l'annuité S2 comme calculé par AXA
+    """
     date_calcul = datetime(date_calcul.year, date_calcul.month, 1)
 
     age_X_liquidation = age_precis(date_naissance_X, date_liquidation)
@@ -206,13 +222,10 @@ def ax(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, dat
     return(ax_axa)
 
 def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, age_depart, frac, methode_age_atteint, tx_reversion, prorata_deces, rattrapage_rente, terme, tx_contre_assurance, tx_frais_rente) :
-    #Fonction qui renvoie l'annuitée calculée par la méthode "annuitéX2" de AXA
-    """date_naissance_X = datetime.strptime(date_naissance_X, "%d/%m/%Y")
-    date_naissance_Y = datetime.strptime(date_naissance_Y, "%d/%m/%Y")
-    date_liquidation = datetime.strptime(date_liquidation, "%d/%m/%Y")
-    date_calcul = datetime.strptime(date_calcul, "%d/%m/%Y")"""
+    """
+    Retourne l'annuité X2 comme calculé par AXA
+    """
     date_calcul = datetime(date_calcul.year, date_calcul.month, 1)
-    date_calcul_modifie = max(date_liquidation, datetime(date_calcul.year, date_calcul.month, 1))
 
     if methode_age_atteint == 120 :
         date_liquidation_contractuelle = fin_mois(date_naissance_X + relativedelta(years = age_depart)) + relativedelta(days = 1)
@@ -222,7 +235,9 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     if rattrapage_rente : 
         date_liquidation = date_liquidation_contractuelle
     else :
-        date_liquidation = max(date_calcul, date_liquidation_contractuelle)
+        date_liquidation = max(date_liquidation, date_liquidation_contractuelle)
+
+    date_calcul_modifie = max(date_liquidation, datetime(date_calcul.year, date_calcul.month, 1))
 
     seconde_periode = fin_frac(date_liquidation, frac)
 
@@ -390,5 +405,7 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     ax_axa = ax_sans_contreassurance + tx_contre_assurance * (ax_avec_contreassurance - ax_sans_contreassurance)
 
     return(ax_axa)
+
+print(ax_2(datetime(1973,5,2), 0, datetime(1973,5,2), 1, datetime(2036,3,1), datetime(2023,3,1), 62, 12, 120, 0, "COMP", False, "ECHU", 1, 0.01))
 
 
