@@ -235,7 +235,7 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     if rattrapage_rente : 
         date_liquidation = date_liquidation_contractuelle
     else :
-        date_liquidation = max(date_liquidation, date_liquidation_contractuelle)
+        date_liquidation = max(date_calcul, date_liquidation_contractuelle)
 
     date_calcul_modifie = max(date_liquidation, datetime(date_calcul.year, date_calcul.month, 1))
 
@@ -405,7 +405,5 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     ax_axa = ax_sans_contreassurance + tx_contre_assurance * (ax_avec_contreassurance - ax_sans_contreassurance)
 
     return(ax_axa)
-
-print(ax_2(datetime(1973,5,2), 0, datetime(1973,5,2), 1, datetime(2036,3,1), datetime(2023,3,1), 62, 12, 120, 0, "COMP", False, "ECHU", 1, 0.01))
 
 
