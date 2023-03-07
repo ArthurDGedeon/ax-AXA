@@ -310,7 +310,7 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
                 if terme == "ECHU" :
                     flux_base_rente.append(age_precis_2(date_temp[-2], date_temp[-1] + relativedelta(days = 1), 6))
                 else :
-                    flux_base_rente.append(age_precis_2(age_precis_2(date_temp[-2], date_temp[-1], 6)))
+                    flux_base_rente.append(age_precis_2(date_temp[-2], date_temp[-1], 6))
             else :
                 flux_base_rente.append(1 / frac)
         else :
@@ -382,7 +382,7 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
                 if terme == "ECHU" :
                     flux_base_rente.append(age_precis_2(date_temp[-2], date_temp[-1] + relativedelta(days = 1), 6))
                 else :
-                    flux_base_rente.append(age_precis_2(age_precis_2(date_temp[-2], date_temp[-1], 6)))
+                    flux_base_rente.append(age_precis_2(date_temp[-2], date_temp[-1], 6))
             else :
                 flux_base_rente.append(1 / frac)
         else :
