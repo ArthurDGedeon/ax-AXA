@@ -20,12 +20,14 @@ def lx(age, annee_naissance, sexe) :
         lx_axa = coeff_lin * tgf05.iloc[math.floor(age), annee_naissance - 1900 + 1] + (1 - coeff_lin) * tgf05.iloc[math.floor(age) + 1, annee_naissance - 1900 + 1]
     return(round(lx_axa,3))
 
+
 def fin_annee(date) :
     """
     Retourne le dernier jour de l'année pour une date donnée
     """
     new_date = datetime(date.year, 12, 31)
     return(new_date)
+
 
 def fin_semestre(date) :
     """
@@ -36,6 +38,7 @@ def fin_semestre(date) :
     else :
         new_date = datetime(date.year, 12, 31)
     return(new_date)
+
 
 def fin_trimestre(date) :
     """
@@ -51,12 +54,14 @@ def fin_trimestre(date) :
         new_date = datetime(date.year, 12, 31)
     return(new_date)
 
+
 def fin_mois(date) :
     """
     Retourne le dernier jour du mois pour une date donnée
     """
     new_date = datetime(date.year, date.month, 1) + relativedelta(months = 1, days = -1)
     return(new_date)
+
 
 def fin_frac(date, frac) :
     """
@@ -80,6 +85,7 @@ def debut_mois(date) :
     new_date = datetime(date.year, date.month, 1)
     return(new_date)
 
+
 def age_precis(date_debut, date_fin) :
     """
     Retourne l'age d'une personne
@@ -92,6 +98,7 @@ def age_precis(date_debut, date_fin) :
     age = (date_fin.year - date_debut.year) + (date_fin.month - date_debut.month) / 12 + (date_fin.day - date_debut.day) / 365
     age = max(age, 0)
     return(age)
+
 
 def age_precis_2(date_debut, date_fin, precision = 3) :
     """
@@ -106,6 +113,7 @@ def age_precis_2(date_debut, date_fin, precision = 3) :
 
     age = max(round(age / 12, precision), 0)
     return(age)
+
 
 def ax(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, terme, frac, prorata_deces, tx_reversion, rattrapage_rente, tx_contre_assurance, tx_frais_rente) :
     """
@@ -220,6 +228,7 @@ def ax(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, dat
     ax_axa -= flux_prorata + flux_rev
 
     return(ax_axa)
+
 
 def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, date_calcul, age_depart, frac, methode_age_atteint, tx_reversion, prorata_deces, rattrapage_rente, terme, tx_contre_assurance, tx_frais_rente) :
     """
@@ -405,5 +414,3 @@ def ax_2(date_naissance_X, sexe_X, date_naissance_Y, sexe_Y, date_liquidation, d
     ax_axa = ax_sans_contreassurance + tx_contre_assurance * (ax_avec_contreassurance - ax_sans_contreassurance)
 
     return(ax_axa)
-
-

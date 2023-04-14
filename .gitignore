@@ -1,3 +1,6 @@
 .venv
 __pycache__
 script_ajout_ligne_param_etude.ipynb
+resultat_ecarts.csv
+test_dev
+test_dev.ipynb
